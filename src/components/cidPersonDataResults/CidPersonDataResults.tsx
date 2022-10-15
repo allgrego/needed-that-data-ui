@@ -5,7 +5,7 @@ import { CidPersonDataResultsProps } from "./cidPersonDataResults.types";
 const CidPersonDataResults: FC<CidPersonDataResultsProps> = ({ personData, viewRif = true }) => {
 
     return (
-        <div className="overflow-hidden bg-white shadow sm:rounded-lg mx-auto">
+        <div className="overflow-hidden bg-gray-50 shadow rounded sm:rounded-lg  mx-auto">
             <div className="px-4 py-5 sm:px-6">
                 <h3 className="text-lg font-medium leading-6 text-gray-900">Results</h3>
                 <p className="mt-1 max-w-2xl text-sm text-gray-500">Personal details according to voter registration.</p>

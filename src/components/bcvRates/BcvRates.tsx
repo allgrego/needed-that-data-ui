@@ -1,11 +1,39 @@
-import { FC, ReactElement } from "react";
+import { FC, ReactElement, useEffect, useState } from "react";
 import { BcvRatesProps } from "./bcvRates.types";
 import { CurrencyDollarIcon, CurrencyEuroIcon } from '@heroicons/react/20/solid'
+import { getParsedTimeDiff, getSecondsDiff } from "../../utils/time";
+import BcvRatesSkeleton from "../skeleton/BcvRatesSkeleton";
 
 const BcvRates: FC<BcvRatesProps> = ({ ratesData }) => {
 
+
+    const [timeDiff, setTimediff] = useState<Record<string, number | string>>({
+        time: '',
+        unit: ''
+    })
+
+    useEffect(() => {
+
+        const lastUpdateDate = new Date(ratesData?.currentTimestamp)
+
+        const interval = setInterval(() => {
+            const now = new Date()
+
+            const timeDiff = getParsedTimeDiff(lastUpdateDate, now)
+
+            if (timeDiff.timeDiff < 10 || timeDiff.timeDiff % 20 === 0) {
+                setTimediff({
+                    ...timeDiff
+                });
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [ratesData])
+
+
     if (!ratesData) {
-        return <div>Loading</div>
+        return <BcvRatesSkeleton />
     }
 
     // Reference currency (VES)
@@ -32,6 +60,7 @@ const BcvRates: FC<BcvRatesProps> = ({ ratesData }) => {
         }
     })
 
+
     return (
 
         <>
@@ -51,14 +80,14 @@ const BcvRates: FC<BcvRatesProps> = ({ ratesData }) => {
                         {
                             rates.map(({ rate, code, name }) => (
                                 <tr key={code} className="bg-slate-100 border-b hover:bg-gray-50">
-                                    <td className="py-4 px-6 text-gray-900 font-medium whitespace-nowrap">
-                                        <div className="h-8 w-8 inline-block">{currenciesIcons[code]}</div> {String(code).toUpperCase()}
+                                    <td className="py-4 px-6 text-gray-800 font-medium whitespace-nowrap">
+                                        <div className="h-8 w-8 inline-block text-indigo-800">{currenciesIcons[code]}</div> {String(code).toUpperCase()}
                                     </td>
                                     <td scope="row" className="py-4 px-4 text-xs">
                                         {name}
                                     </td>
                                     <td className="py-4 px-6">
-                                        <div className="inline font-bold text-gray-900 text-lg">{rate}</div> <span className="text-xs scale-50">{currency}/{String(code).toUpperCase()}</span>
+                                        <div className="inline-block font-bold text-gray-900 text-lg">{rate}</div> <span className="text-xs scale-50">{currency}/{String(code).toUpperCase()}</span>
                                     </td>
                                 </tr>
                             ))
@@ -66,7 +95,8 @@ const BcvRates: FC<BcvRatesProps> = ({ ratesData }) => {
                     </tbody>
                 </table>
             </div>
-            <div className="text-right text-sm mt-5 font-medium text-gray-600">Last update: {new Date(ratesData.currentTimestamp).toLocaleString('en-GB')}</div>
+            {/* <div className="text-right text-sm mt-5 font-medium text-gray-600">Last update: {new Date(ratesData.currentTimestamp).toLocaleString('en-GB')}</div> */}
+            <div className="text-right text-sm mt-5 font-medium text-gray-500 mb-10">Last update: {Number(timeDiff.timeDiff) < 10 && timeDiff.unit === 'seconds' || !timeDiff?.timeDiff ? 'Just now' : `${timeDiff.timeDiff} ${timeDiff.unit} ago`}</div>
         </>
 
     );

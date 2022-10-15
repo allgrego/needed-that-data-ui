@@ -2,11 +2,11 @@ import React from 'react';
 
 
 const WelcomeBanner = () => {
-    return (
-        <div className="relative bg-indigo-200 p-4 sm:p-6 rounded-sm overflow-hidden mb-8 shadow-lg">
+    return ( 
+        <div className="relative bg-gradient-to-tr from-indigo-200 to to-sky-100 p-4 sm:p-6 rounded-sm overflow-hidden mb-8 shadow-lg">
 
             {/* Background illustration */}
-            <div className="absolute right-0 top-0 -mt-4 mr-16 pointer-events-none hidden xl:block" aria-hidden="true">
+            <div className="absolute right-0 top-0 -mt-4 mr-16 pointer-events-none hidden lg:block" aria-hidden="true">
                 <svg width="319" height="198" xmlnsXlink="http://www.w3.org/1999/xlink">
                     <defs>
                         <path id="welcome-a" d="M64 0l64 128-64-20-64 20z" />
@@ -49,8 +49,12 @@ const WelcomeBanner = () => {
 
             {/* Content */}
             <div className="relative">
-                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold mb-1"><span className='text-indigo-800'>I Needed This Data</span> App 👀</h1>
-                <p>Here is what we got today:</p>
+                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold mb-1"><span className='text-indigo-800'>Needed That Data</span> App 👀</h1>
+                <p className='text-sm my-2 text-slate-600 font-light'>The UI to get some Venezuelan data that you may need (or not)</p>
+                <div className='grid grid-cols-1 md:grid-cols-2'>
+                    <p className='text-md text-slate-600 font-light'>Here{'\''}s what we got today:</p>
+                    <p className='text-right text-xs my-2 text-gray-900 font-medium'>Created by <a className='text-indigo-700' href='https://github.com/allgrego' target={'_blank'} rel="noreferrer">Allgrego</a></p>
+                </div>
             </div>
 
         </div>

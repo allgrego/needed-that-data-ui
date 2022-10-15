@@ -16,7 +16,7 @@ export const fetchRatesInVes = async (): Promise<BcvRatesInfo> => {
 
         // Fix to N decimals
         Object.entries(ratesData.rates).forEach(([code, rate]) => {
-            const decimals = 3
+            const decimals = 2
             ratesData.rates[code] = (Math.round(Number(rate) * 100) / 100).toFixed(decimals);
         })
 
