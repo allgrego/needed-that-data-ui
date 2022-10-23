@@ -5,11 +5,14 @@ import CidPersonDataError from '../components/cidPersonDataResults/CidPersonData
 import CidPersonDataResults from '../components/cidPersonDataResults/CidPersonDataResults'
 import CidSearcher from '../components/cidSearcher/CidSearcher'
 import useCidSearcher from '../components/cidSearcher/useCidSearcher'
+import MonitorDolarRates from '../components/monitorDolarRates/MonitorDolarRates'
 import Skeleton from '../components/skeleton/Skeleton'
 import WelcomeBanner from '../components/welcomeBanner/WelcomeBanner'
 import MainLayout from '../layouts/mainLayout/MainLayout'
 import { fetchRatesInVes } from '../utils/bcv'
 import { BcvRatesInfo } from '../utils/bcv.types'
+import { fetchRatesHistoryInVes } from '../utils/monitor-dolar'
+import { MonitorHistoryRatesData } from '../utils/monitor-dolar.types'
 
 
 const Home: NextPage = () => {
@@ -23,13 +26,22 @@ const Home: NextPage = () => {
   /**
    * BCV Rates Related
    */
-  const query = useQuery(['bcvRates'], fetchRatesInVes, {
+  const bcvQuery = useQuery(['bcvRates'], fetchRatesInVes, {
     initialData: undefined,
     refetchOnWindowFocus: true,
-    staleTime: 5 * 60 * 1000 // update after 1 minute 
+    staleTime: 5 * 60 * 1000 // update after 5 minute 
   })
-  const bcvRatesData: BcvRatesInfo | undefined = query.data
+  const bcvRatesData: BcvRatesInfo | undefined = bcvQuery.data
 
+  /**
+   * Monitor Dolar Rates Related
+   */
+  const monitorDolarQuery = useQuery(['monitorDolarHistoryRates'], fetchRatesHistoryInVes, {
+    initialData: undefined,
+    refetchOnWindowFocus: true,
+    staleTime: 5 * 60 * 1000 // update after 5 minutes
+  })
+  const monitorDolarHistoryRates: MonitorHistoryRatesData | undefined = monitorDolarQuery.data
 
   return (
     <>
@@ -67,11 +79,11 @@ const Home: NextPage = () => {
                       <div className='font-light mt-3 text-sm'>Current Bolivares (VES) parallel  rate </div>
                     </div>
                     <div>
-                      <BcvRates
-                        ratesData={bcvRatesData}
+                      <MonitorDolarRates
+                        ratesHistoryData={monitorDolarHistoryRates}
                       />
                     </div>
-                    <div className='text-center text-xs text-gray-700 mt-5 scale-100 opacity-60'>Source: <a className='font-bold text-indigo-600' href='https://monitordolarvzla.com/' target={'_blank'} rel="noreferrer">Monitor Dolar Venezuela</a></div>
+                    <div className='text-center text-xs text-gray-700 mt-5 scale-100 opacity-60'>Source: <a className='font-bold text-indigo-600' href='https://monitordolarvzla.com/category/promedio-del-dolar/' target={'_blank'} rel="noreferrer">Monitor Dolar Venezuela</a></div>
                   </div>
                 </div>
               </div>
