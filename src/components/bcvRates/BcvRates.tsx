@@ -64,7 +64,7 @@ const BcvRates: FC<BcvRatesProps> = ({ ratesData }) => {
     return (
 
         <>
-            <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
+            <div className="overflow-x-auto relative shadow-md rounded-lg">
                 <table className="w-full text-sm text-left text-gray-500">
                     <thead className="text-xs text-gray-100  bg-indigo-600">
                         <tr>

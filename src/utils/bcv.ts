@@ -2,7 +2,7 @@ import { BcvRatesInfo } from "./bcv.types"
 
 export const fetchRatesInVes = async (): Promise<BcvRatesInfo> => {
     try {
-        const url = `/api/bcv/rates?`
+        const url = `/api/bcv/rates`
 
         const response = await fetch(url, {
             method: 'GET'

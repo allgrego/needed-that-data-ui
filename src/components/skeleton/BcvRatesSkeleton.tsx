@@ -2,7 +2,7 @@ import { FC } from "react";
 
 const BcvRatesSkeleton: FC = () => {
     return (
-        <div className="overflow-x-auto relative shadow-md sm:rounded-lg opacity-80">
+        <div className="overflow-x-auto relative shadow-md rounded-lg opacity-80">
             <table className="w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700  bg-indigo-500">
                     <tr>
