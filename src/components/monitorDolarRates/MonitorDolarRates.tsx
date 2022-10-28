@@ -7,7 +7,17 @@ const MonitorDolarRates: FC<MonitorDolarRatesProps> = ({ ratesHistoryData }) => 
 
     if (!ratesHistoryData) return <BcvRatesSkeleton />
 
-    const [lastRate, beforeLastRate] = ratesHistoryData.rates
+    const ratesHistory = ratesHistoryData.rates.map((rate) => {
+        const actualDate = new Date(rate.date)
+        // Set Timezome offset
+        actualDate.setUTCHours(actualDate.getUTCHours() + 4)
+        return {
+            date: actualDate.toISOString(),
+            usd: rate.usd
+        }
+    })
+
+    const [lastRate, beforeLastRate] = ratesHistory
 
     const isTrendingUp = Number(lastRate.usd) > Number(beforeLastRate.usd)
     const isEqual = Number(lastRate.usd) === Number(beforeLastRate.usd)
@@ -52,7 +62,7 @@ const MonitorDolarRates: FC<MonitorDolarRatesProps> = ({ ratesHistoryData }) => 
                                         ) :
                                             // Trending Down
                                             (
-                                                <div className="inline-block font-bold text-green-800 text-md"><ArrowTrendingUpIcon className="h-5 w-5 inline" /> <span>{differencePercentage.toFixed(2)}%</span></div>
+                                                <div className="inline-block font-bold text-green-800 text-md"><ArrowTrendingDownIcon className="h-5 w-5 inline" /> <span>{differencePercentage.toFixed(2)}%</span></div>
                                             )
                                     )
                             }
@@ -62,7 +72,7 @@ const MonitorDolarRates: FC<MonitorDolarRatesProps> = ({ ratesHistoryData }) => 
                     </tbody>
                 </table>
             </div>
-            
+
             <div className="text-right text-sm mt-5 font-medium text-gray-500 mb-10">Last update: {lastRateDate.toLocaleString("en-GB")}</div>
         </>
     );
