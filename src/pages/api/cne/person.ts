@@ -29,14 +29,28 @@ export default async function handler(
 
     if (response.status >= 500) {
       errorResponse.error.code = response.statusText
-      errorResponse.error.message = "Error fetching data..."
+      errorResponse.error.message = `Error fetching data from ${url}...`
+      try {
+        const jsonResponse = await response.json()
+        console.log({ jsonResponse });
+
+      } catch (error) {
+        console.log('Invalid JSON error response...');
+      }
       res.status(response.status).json(errorResponse)
       return
     }
 
     if (response.status === 400) {
       errorResponse.error.code = response.statusText
-      errorResponse.error.message = "Bad arguments"
+      errorResponse.error.message = `Bad arguments. From ${url}...`
+      try {
+        const jsonResponse = await response.json()
+        console.log({ jsonResponse });
+
+      } catch (error) {
+        console.log('Invalid JSON error response...');
+      }
       res.status(response.status).json(errorResponse)
       return
     }

@@ -27,7 +27,15 @@ export default async function handler(
 
         if (!response.ok) {
             errorResponse.error.code = response.statusText
-            errorResponse.error.message = "Error fetching data..."
+            errorResponse.error.message = `Error fetching data from ${url}...`
+            try {
+                const jsonResponse = await response.json()
+                console.log({ jsonResponse });
+
+            } catch (error) {
+                console.log('Invalid JSON error response...');
+            }
+
             res.status(response.status).json(errorResponse)
             return
         }
