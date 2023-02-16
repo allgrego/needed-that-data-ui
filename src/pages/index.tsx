@@ -33,10 +33,16 @@ const Home: NextPage = () => {
   })
   const bcvRatesData: BcvRatesInfo | undefined = bcvQuery.data
 
-  /**
-   * Monitor Dolar Rates Related
-   */
-  const monitorDolarQuery = useQuery(['monitorDolarHistoryRates'], fetchRatesHistoryInVes, {
+  const monitorDolarQuery = useQuery({
+    queryKey: ['monitorDolarHistoryRates'],
+    queryFn: async () => {
+      try {
+        return await fetchRatesHistoryInVes()
+      } catch (error) {
+        console.debug("Error in Monitor Dolar query: ", error);
+        return Promise.reject("Monitor Dolar service unavailable!")
+      }
+    },
     initialData: undefined,
     refetchOnWindowFocus: true,
     staleTime: 5 * 60 * 1000 // update after 5 minutes
@@ -65,6 +71,11 @@ const Home: NextPage = () => {
                     <div>
                       <BcvRates
                         ratesData={bcvRatesData}
+                        isError={bcvQuery.isError}
+                        isFetched={bcvQuery.isFetched}
+                        isFetching={bcvQuery.isFetching}
+                        isLoading={bcvQuery.isLoading}
+                        dataUpdatedAt={bcvQuery.dataUpdatedAt}
                       />
                     </div>
                     <div className='text-center text-xs text-gray-600 mt-5 scale-100 opacity-60'>Source: <a className='font-bold text-indigo-600' href='https://www.bcv.org.ve/' target={'_blank'} rel="noreferrer">Central Bank of Venezuela (<span className='italic'>{'"BCV"'}</span>)</a></div>
@@ -76,14 +87,19 @@ const Home: NextPage = () => {
                   <div>
                     <div className='mb-6 px-3'>
                       <h1 className='font-bold text-3xl text-slate-800'>Monitor Dolar Rate</h1>
-                      <div className='font-light mt-3 text-sm'>Current Bolivares (VES) parallel  rate </div>
+                      <div className='font-light mt-3 text-sm'>Current Bolivares (VES) parallel rate </div>
                     </div>
                     <div>
                       <MonitorDolarRates
                         ratesHistoryData={monitorDolarHistoryRates}
+                        isError={monitorDolarQuery.isError}
+                        isFetched={monitorDolarQuery.isFetched}
+                        isFetching={monitorDolarQuery.isFetching}
+                        isLoading={monitorDolarQuery.isLoading}
+                        dataUpdatedAt={monitorDolarQuery.dataUpdatedAt}
                       />
                     </div>
-                    <div className='text-center text-xs text-gray-700 mt-5 scale-100 opacity-60'>Source: <a className='font-bold text-indigo-600' href='https://monitordolarvzla.com/category/promedio-del-dolar/' target={'_blank'} rel="noreferrer">Monitor Dolar Venezuela</a></div>
+                    <div className='text-center text-xs text-gray-700 mt-5 scale-100 opacity-60'>Source: <a className='font-bold text-indigo-600' href='https://monitordolarvzla.com/category/promedio-del-dolar/' target={'_blank'} rel="noreferrer">Monitor Dolar Venezuela Website</a></div>
                   </div>
                 </div>
               </div>
@@ -152,10 +168,3 @@ const Home: NextPage = () => {
 }
 
 export default Home
-
-
-export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
-  return {
-    props: {}, // will be passed to the page component as props
-  }
-}
