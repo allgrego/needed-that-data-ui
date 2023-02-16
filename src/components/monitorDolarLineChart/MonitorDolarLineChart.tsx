@@ -98,7 +98,14 @@ const MonitorDolarLineChart: FC<MonitorDolarLineChartProps> = ({ dataQuery }) =>
         };
 
 
-        const labels = (dataQuery.data?.rates || []).map((rate) => (new Date(rate.date)).toLocaleString('es-US')).reverse()
+        const labels = (dataQuery.data?.rates || []).map((rate) => {
+            const date = new Date(rate.date)
+            // Set Timezome offset (if any)
+            const offsetHours = process.env.NEXT_PUBLIC_MONITOR_HOURS_OFFSET ? Number(process.env.NEXT_PUBLIC_MONITOR_HOURS_OFFSET) : 0
+            date.setUTCHours(date.getUTCHours() + offsetHours)
+            return date.toLocaleString('es-US')
+        }).reverse()
+
         const dataRates = (dataQuery.data?.rates || []).map((rate) => Number(rate.usd)).reverse()
         const meanRates = dataRates.map((r, index) => mean(dataRates, index + 1))
 
