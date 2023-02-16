@@ -1,43 +1,35 @@
 import { FC, ReactElement, useEffect, useState } from "react";
-import { BcvRatesProps } from "./bcvRates.types";
 import { CurrencyDollarIcon, CurrencyEuroIcon } from '@heroicons/react/20/solid'
 import { getParsedTimeDiff, getSecondsDiff } from "../../utils/time";
 import BcvRatesSkeleton from "../skeleton/BcvRatesSkeleton";
+import { BcvRatesInfo } from "../../utils/bcv.types";
+import EmptyMessage from "../emptyMessage/EmptyMessage";
+import useMomentsAgo from "../../hooks/useMomentsAgo";
+import Spinner from "../spinner/Spinner";
+interface BcvRatesProps {
+    ratesData?: BcvRatesInfo
+    isLoading?: boolean
+    isError?: boolean
+    isFetching?: boolean
+    isFetched?: boolean
+    dataUpdatedAt?: number
+}
 
-const BcvRates: FC<BcvRatesProps> = ({ ratesData }) => {
+const BcvRates: FC<BcvRatesProps> = ({ ratesData: data, isError = false, isFetching = false, isFetched = false, dataUpdatedAt = 0 }) => {
 
+    // const { timeDiff, unit } = useMomentsAgo(dataUpdatedAt)
 
-    const [timeDiff, setTimediff] = useState<Record<string, number | string>>({
-        time: '',
-        unit: ''
-    })
-
-    useEffect(() => {
-
-        const lastUpdateDate = new Date(ratesData?.currentTimestamp)
-
-        const interval = setInterval(() => {
-            const now = new Date()
-
-            const timeDiff = getParsedTimeDiff(lastUpdateDate, now)
-
-            if (timeDiff.timeDiff < 10 || timeDiff.timeDiff % 20 === 0) {
-                setTimediff({
-                    ...timeDiff
-                });
-            }
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [ratesData])
-
-
-    if (!ratesData) {
-        return <BcvRatesSkeleton />
-    }
+    // When error
+    if (isError) return <EmptyMessage>Service unavailable😢</EmptyMessage>
+    // First loading
+    if (!isFetched && isFetching) return <BcvRatesSkeleton />
+    // Retrying loading
+    if (isFetched && !data && isFetching) return <EmptyMessage><Spinner />Retrying...</EmptyMessage>
+    // Already fetched but no data
+    if (!data) return <EmptyMessage>No data available</EmptyMessage>
 
     // Reference currency (VES)
-    const { currency } = ratesData
+    const { currency } = data
 
     const currenciesNames: Record<string, string> = {
         usd: 'American Dollar',
@@ -52,7 +44,7 @@ const BcvRates: FC<BcvRatesProps> = ({ ratesData }) => {
 
 
     // Array of rates info
-    const rates: Record<string, any>[] = Object.entries(ratesData.rates).map(([code, value]) => {
+    const rates: Record<string, any>[] = Object.entries(data.rates).map(([code, value]) => {
         return {
             code,
             name: currenciesNames[code],
@@ -95,8 +87,9 @@ const BcvRates: FC<BcvRatesProps> = ({ ratesData }) => {
                     </tbody>
                 </table>
             </div>
-            {/* <div className="text-right text-sm mt-5 font-medium text-gray-600">Last update: {new Date(ratesData.currentTimestamp).toLocaleString('en-GB')}</div> */}
-            <div className="text-right text-sm mt-5 font-medium text-gray-500 mb-10">Last update: {Number(timeDiff.timeDiff) < 10 && timeDiff.unit === 'seconds' || !timeDiff?.timeDiff ? 'Just now' : `${timeDiff.timeDiff} ${timeDiff.unit} ago`}</div>
+            <div className="text-right text-sm mt-5 font-medium text-gray-500 mb-2">Published at: {data.bcvDate ? new Date(data.bcvDate + 'T08:00:00.000Z').toLocaleDateString('en-GB') : '-'}</div>
+            <div className={`text-right text-xs mt-2 font-base text-gray-500 mb-10 ${isFetching && 'animate-pulse'}`}>Updated at: {dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleString("en-GB") : '-'}</div>
+            {/* <div className={`text-right text-xs mt-2 font-base text-gray-500 mb-10${isFetching && 'animate-pulse'}`}>Updated at: {Number(timeDiff) < 10 && unit === 'seconds' || !timeDiff ? 'Just now' : `${timeDiff} ${unit} ago`}</div> */}
         </>
 
     );

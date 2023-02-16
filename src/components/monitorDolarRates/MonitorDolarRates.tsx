@@ -1,16 +1,38 @@
-import { CurrencyDollarIcon, ArrowTrendingDownIcon, ArrowTrendingUpIcon, Bars2Icon } from "@heroicons/react/20/solid";
 import { FC } from "react";
+import { CurrencyDollarIcon, ArrowTrendingDownIcon, ArrowTrendingUpIcon, Bars2Icon } from "@heroicons/react/20/solid";
 import BcvRatesSkeleton from "../skeleton/BcvRatesSkeleton";
-import { MonitorDolarRatesProps } from "./monitorDolarRates.types";
+import { MonitorHistoryRatesData } from "../../utils/monitor-dolar.types";
+import EmptyMessage from "../emptyMessage/EmptyMessage";
+import useMomentsAgo from "../../hooks/useMomentsAgo";
+import Spinner from "../spinner/Spinner";
 
-const MonitorDolarRates: FC<MonitorDolarRatesProps> = ({ ratesHistoryData }) => {
+interface MonitorDolarRatesProps {
+    ratesHistoryData: MonitorHistoryRatesData | undefined
+    isLoading?: boolean
+    isError?: boolean
+    isFetching?: boolean
+    isFetched?: boolean
+    dataUpdatedAt?: number
+}
 
-    if (!ratesHistoryData) return <BcvRatesSkeleton />
+const MonitorDolarRates: FC<MonitorDolarRatesProps> = ({ ratesHistoryData: data, isError = false, isFetching = false, isFetched = false, dataUpdatedAt = 0 }) => {
 
-    const ratesHistory = ratesHistoryData.rates.map((rate) => {
+    // const { timeDiff, unit } = useMomentsAgo(dataUpdatedAt)
+
+    // When error
+    if (isError) return <EmptyMessage>Service unavailable😢</EmptyMessage>
+    // First loading
+    if (!isFetched && isFetching) return <BcvRatesSkeleton />
+    // Retrying loading
+    if (isFetched && !data && isFetching) return <EmptyMessage><Spinner />Retrying...</EmptyMessage>
+    // Already fetched but no data
+    if (!data) return <EmptyMessage>No data available</EmptyMessage>
+
+    const ratesHistory = data.rates.map((rate) => {
         const actualDate = new Date(rate.date)
         // Set Timezome offset
-        actualDate.setUTCHours(actualDate.getUTCHours() + 4)
+        const offsetHours = process.env.NEXT_PUBLIC_MONITOR_HOURS_OFFSET ? Number(process.env.NEXT_PUBLIC_MONITOR_HOURS_OFFSET) : 0
+        actualDate.setUTCHours(actualDate.getUTCHours() + offsetHours)
         return {
             date: actualDate.toISOString(),
             usd: rate.usd
@@ -73,7 +95,9 @@ const MonitorDolarRates: FC<MonitorDolarRatesProps> = ({ ratesHistoryData }) => 
                 </table>
             </div>
 
-            <div className="text-right text-sm mt-5 font-medium text-gray-500 mb-10">Last update: {lastRateDate.toLocaleString("en-GB")}</div>
+            <div className="text-right text-sm mt-5 font-medium text-gray-500 mb-2">Published at: {lastRateDate.toLocaleString("es-US")}</div>
+            <div className={`text-right text-xs mt-2 font-base text-gray-500 mb-10 ${isFetching && 'animate-pulse'}`}>Updated at: {dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleString("en-GB") : '-'}</div>
+            {/* <div className={`text-right text-xs mt-2 font-base text-gray-500 mb-10${isFetching && 'animate-pulse'}`}>Updated: {Number(timeDiff) < 10 && unit === 'seconds' || !timeDiff ? 'Just now' : `${timeDiff} ${unit} ago`}</div> */}
         </>
     );
 }

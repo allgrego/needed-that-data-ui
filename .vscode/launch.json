@@ -27,7 +27,7 @@
             "name": "Next.js: debug full stack",
             "type": "node-terminal",
             "request": "launch",
-            "command": "npx next dev -H ${input:host} -p ${input:port}",
+            "command": "npm run dev",
             "serverReadyAction": {
                 "pattern": "started server on .+, url: (https?://.+)",
                 "uriFormat": "%s",
