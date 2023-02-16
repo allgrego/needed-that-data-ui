@@ -31,7 +31,8 @@ const MonitorDolarRates: FC<MonitorDolarRatesProps> = ({ ratesHistoryData: data,
     const ratesHistory = data.rates.map((rate) => {
         const actualDate = new Date(rate.date)
         // Set Timezome offset
-        // actualDate.setUTCHours(actualDate.getUTCHours() + 4)
+        const offsetHours = process.env.NEXT_PUBLIC_MONITOR_HOURS_OFFSET ? Number(process.env.NEXT_PUBLIC_MONITOR_HOURS_OFFSET) : 0
+        actualDate.setUTCHours(actualDate.getUTCHours() + offsetHours)
         return {
             date: actualDate.toISOString(),
             usd: rate.usd

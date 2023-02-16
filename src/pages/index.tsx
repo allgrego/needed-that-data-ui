@@ -50,27 +50,7 @@ const Home: NextPage = () => {
     staleTime: 5 * 60 * 1000 // update after 5 minutes
   })
   const monitorDolarHistoryRates: MonitorHistoryRatesData | undefined = monitorDolarQuery.data
-
-
-  /////////////////////// 
-
-
-
-  // const dataChange = {
-  //   labels,
-  //   datasets: [
-  //     {
-  //       label: 'Rate Changes',
-  //       data: rateChange(dataRates),
-  //       borderColor: 'rgb(255, 99, 132)',
-  //       backgroundColor: 'rgba(255, 99, 132, 0.5)',
-  //       type: 'bar' as const
-  //     },
-  //   ],
-  // };
-
-  console.log({ monitorDolarHistoryRates });
-
+  
   return (
     <>
       <MainLayout>
