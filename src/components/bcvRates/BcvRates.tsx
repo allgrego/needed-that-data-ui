@@ -5,6 +5,7 @@ import BcvRatesSkeleton from "../skeleton/BcvRatesSkeleton";
 import { BcvRatesInfo } from "../../utils/bcv.types";
 import EmptyMessage from "../emptyMessage/EmptyMessage";
 import useMomentsAgo from "../../hooks/useMomentsAgo";
+import Spinner from "../spinner/Spinner";
 interface BcvRatesProps {
     ratesData?: BcvRatesInfo
     isLoading?: boolean
@@ -23,7 +24,7 @@ const BcvRates: FC<BcvRatesProps> = ({ ratesData: data, isError = false, isFetch
     // First loading
     if (!isFetched && isFetching) return <BcvRatesSkeleton />
     // Retrying loading
-    if (isFetched && !data && isFetching) return <EmptyMessage>Retrying...💭</EmptyMessage>
+    if (isFetched && !data && isFetching) return <EmptyMessage><Spinner />Retrying...</EmptyMessage>
     // Already fetched but no data
     if (!data) return <EmptyMessage>No data available</EmptyMessage>
 

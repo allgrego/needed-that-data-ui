@@ -13,6 +13,8 @@ import { fetchRatesInVes } from '../utils/bcv'
 import { BcvRatesInfo } from '../utils/bcv.types'
 import { fetchRatesHistoryInVes } from '../utils/monitor-dolar'
 import { MonitorHistoryRatesData } from '../utils/monitor-dolar.types'
+import MonitorDolarLineChart from '../components/monitorDolarLineChart/MonitorDolarLineChart'
+
 
 
 const Home: NextPage = () => {
@@ -48,6 +50,26 @@ const Home: NextPage = () => {
     staleTime: 5 * 60 * 1000 // update after 5 minutes
   })
   const monitorDolarHistoryRates: MonitorHistoryRatesData | undefined = monitorDolarQuery.data
+
+
+  /////////////////////// 
+
+
+
+  // const dataChange = {
+  //   labels,
+  //   datasets: [
+  //     {
+  //       label: 'Rate Changes',
+  //       data: rateChange(dataRates),
+  //       borderColor: 'rgb(255, 99, 132)',
+  //       backgroundColor: 'rgba(255, 99, 132, 0.5)',
+  //       type: 'bar' as const
+  //     },
+  //   ],
+  // };
+
+  console.log({ monitorDolarHistoryRates });
 
   return (
     <>
@@ -99,7 +121,14 @@ const Home: NextPage = () => {
                         dataUpdatedAt={monitorDolarQuery.dataUpdatedAt}
                       />
                     </div>
+
+                    <div className='flex items-center justify-center mt-8 mb-6 min-h-[20rem]'>
+                      <MonitorDolarLineChart dataQuery={monitorDolarQuery} />
+                    </div>
+
                     <div className='text-center text-xs text-gray-700 mt-5 scale-100 opacity-60'>Source: <a className='font-bold text-indigo-600' href='https://monitordolarvzla.com/category/promedio-del-dolar/' target={'_blank'} rel="noreferrer">Monitor Dolar Venezuela Website</a></div>
+
+                    <div className='text-center text-xs scale-90 font-medium text-gray-700/60 mt-2'>Rates obtained from the website may vary compared to the instagram account</div>
                   </div>
                 </div>
               </div>
