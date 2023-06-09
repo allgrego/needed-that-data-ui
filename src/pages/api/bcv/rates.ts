@@ -1,51 +1,49 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { PersonDataCne } from '../../../utils/cne.types'
-import { BACKEND_BASE_URL } from '../../../utils/fetch'
-import { HttpErrorResponse } from '../../../utils/fetch.types'
+import type { NextApiRequest, NextApiResponse } from "next";
 
-type Data = any | HttpErrorResponse
+import { getRoute } from "@/common/utils/routes";
+import { PersonDataCne } from "@/modules/nationalIdentity/types/cne.types";
+import { HttpErrorResponse } from "@/common/types/fetch.types";
+
+type Data = any | HttpErrorResponse;
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-
   let errorResponse: HttpErrorResponse = {
     error: {
-      code: 'internal',
-      message: 'INTERNAL'
-    }
-  }
+      code: "internal",
+      message: "INTERNAL",
+    },
+  };
 
   try {
-    const url = `${BACKEND_BASE_URL}/v1/bcv/rates`
+    const url = getRoute("service-bcv-get-rates");
 
     const response = await fetch(url, {
-      method: 'GET',
-    })
+      method: "GET",
+    });
 
     if (!response.ok) {
-      errorResponse.error.code = response.statusText
-      errorResponse.error.message = `Error fetching data from ${url}...`
+      errorResponse.error.code = response.statusText;
+      errorResponse.error.message = `Error fetching data from ${url}...`;
       try {
-        const jsonResponse = await response.json()
+        const jsonResponse = await response.json();
         console.log({ jsonResponse });
-
       } catch (error) {
-        console.log('Invalid JSON error response...');
+        console.log("Invalid JSON error response...");
       }
-      res.status(response.status).json(errorResponse)
-      return
+      res.status(response.status).json(errorResponse);
+      return;
     }
 
-    const personData: PersonDataCne | undefined = await response.json()
+    const personData: PersonDataCne | undefined = await response.json();
 
-    res.status(response.status).json(personData)
-    return
-
+    res.status(response.status).json(personData);
+    return;
   } catch (error) {
     console.error(error);
-    res.status(500).json(errorResponse)
+    res.status(500).json(errorResponse);
   }
 }
