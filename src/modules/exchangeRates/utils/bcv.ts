@@ -1,8 +1,10 @@
-import { BcvRatesInfo } from "../types/bcv.types";
+import { debugErrorLog } from "@/common/utils/debug";
+import { getRoute } from "@/common/utils/routes";
+import { BcvRatesInfo } from "@/modules/exchangeRates/types/bcv.types";
 
 export const fetchRatesInVes = async (): Promise<BcvRatesInfo> => {
   try {
-    const url = `/api/bcv/rates`;
+    const url = getRoute("api-rates-bcv-get-rates");
 
     const response = await fetch(url, {
       method: "GET",
@@ -24,7 +26,7 @@ export const fetchRatesInVes = async (): Promise<BcvRatesInfo> => {
 
     return ratesData;
   } catch (error) {
-    console.error(error);
+    debugErrorLog("Failure fetching BCV rates in VES", error);
     throw error;
   }
 };
