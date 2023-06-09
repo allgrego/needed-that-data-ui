@@ -1,6 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { BACKEND_BASE_URL } from "@/common/utils/fetch";
+
+import { getRoute } from "@/common/utils/routes";
+
 import { HttpErrorResponse } from "@/common/types/fetch.types";
 import { MonitorHistoryRatesData } from "@/modules/exchangeRates/types/monitor-dolar.types";
 
@@ -18,7 +20,7 @@ export default async function handler(
   };
 
   try {
-    const url = `${BACKEND_BASE_URL}/v1/monitor-dolar/rates`;
+    const url = getRoute("service-monitor-dolar-get-rates");
 
     const response = await fetch(url, {
       method: "GET",

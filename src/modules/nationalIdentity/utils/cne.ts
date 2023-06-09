@@ -1,3 +1,4 @@
+import { getRoute } from "@/common/utils/routes";
 import { PersonDataCne } from "@/modules/nationalIdentity/types/cne.types";
 
 export const fetchPersonData = async (
@@ -9,7 +10,9 @@ export const fetchPersonData = async (
 
     if (!number) throw new Error("A valid ID number is required");
 
-    const url = `/api/cne/person?nat=${nationality}&num=${number}`;
+    const url = `${getRoute(
+      "api-national-identity-cne-get-person-data"
+    )}?nat=${nationality}&num=${number}`;
 
     const response = await fetch(url, {
       method: "GET",

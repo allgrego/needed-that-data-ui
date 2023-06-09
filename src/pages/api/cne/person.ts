@@ -1,8 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { BACKEND_BASE_URL } from "@/common/utils/fetch";
+
 import { PersonDataCne } from "@/modules/nationalIdentity/types/cne.types";
 import { HttpErrorResponse } from "@/common/types/fetch.types";
+import { getRoute } from "@/common/utils/routes";
 
 type Data = PersonDataCne | undefined | HttpErrorResponse;
 
@@ -21,15 +22,17 @@ export default async function handler(
   };
 
   try {
-    const url = `${BACKEND_BASE_URL}/v1/cne/search/cid?nat=${nationality}&num=${number}`;
+    const url = `${getRoute(
+      "service-cne-cid-search"
+    )}?nat=${nationality}&num=${number}`;
 
     const response = await fetch(url, {
       method: "GET",
     });
 
-    if (response.status >= 500) {
+    if (response.status === 400) {
       errorResponse.error.code = response.statusText;
-      errorResponse.error.message = `Error fetching data from ${url}...`;
+      errorResponse.error.message = `Bad arguments. From ${url}...`;
       try {
         const jsonResponse = await response.json();
         console.log({ jsonResponse });
@@ -40,9 +43,9 @@ export default async function handler(
       return;
     }
 
-    if (response.status === 400) {
+    if (!response.ok) {
       errorResponse.error.code = response.statusText;
-      errorResponse.error.message = `Bad arguments. From ${url}...`;
+      errorResponse.error.message = `Error fetching data from ${url}...`;
       try {
         const jsonResponse = await response.json();
         console.log({ jsonResponse });

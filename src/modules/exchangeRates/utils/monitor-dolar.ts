@@ -1,9 +1,11 @@
-import { MonitorHistoryRatesData } from "../types/monitor-dolar.types";
+import { debugErrorLog } from "@/common/utils/debug";
+import { getRoute } from "@/common/utils/routes";
+import { MonitorHistoryRatesData } from "@/modules/exchangeRates/types/monitor-dolar.types";
 
 export const fetchRatesHistoryInVes =
   async (): Promise<MonitorHistoryRatesData> => {
     try {
-      const url = `api/monitor-dolar/rates`;
+      const url = getRoute("api-rates-monitor-dolar-get-rates");
 
       const response = await fetch(url, {
         method: "GET",
@@ -19,7 +21,7 @@ export const fetchRatesHistoryInVes =
 
       return ratesData;
     } catch (error) {
-      console.error(error);
+      debugErrorLog("Failure fetching Monitor Dolar rates history", error);
       throw error;
     }
   };
