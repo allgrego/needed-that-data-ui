@@ -16,6 +16,9 @@ import useCidSearcher from "@/modules/nationalIdentity/hooks/useCidSearcher";
 
 import { MonitorHistoryRatesData } from "@/modules/exchangeRates/types/monitor-dolar.types";
 import { BcvRatesInfo } from "@/modules/exchangeRates/types/bcv.types";
+import useBanksCodes from "@/modules/banks/hooks/useBanksCodes";
+import Spinner from "@/common/components/spinner/Spinner";
+import EmptyMessage from "@/common/components/emptyMessage/EmptyMessage";
 
 const Home: NextPage = () => {
   /**
@@ -65,6 +68,17 @@ const Home: NextPage = () => {
   });
   const monitorDolarHistoryRates: MonitorHistoryRatesData | undefined =
     monitorDolarQuery.data;
+
+  /**
+   * Banks codes Related
+   */
+  const {
+    banksDataQuery,
+    banksToDisplay,
+    toggleShowAll,
+    showAll,
+    onBankClick,
+  } = useBanksCodes();
 
   return (
     <>
@@ -159,9 +173,8 @@ const Home: NextPage = () => {
                   </div>
                 </div>
               </div>
-
               {/* Column 2 */}
-              <div className="w-full mt-6 lg:w-1/2 lg:mt-0 ">
+              <div className="w-full mt-6 lg:w-1/2 lg:mt-0 space-y-7 ">
                 {/* Venezuelan ID searcher */}
                 <div className="bg-gradient-to-br from-indigo-300 to-sky-200 rounded p-4 sm:p-6 shadow-lg h-fit ">
                   <div className="mb-10">
@@ -218,10 +231,97 @@ const Home: NextPage = () => {
                     </a>
                   </div>
                 </div>
+
+                {/* Banks Codes */}
+                <div className="bg-gradient-to-br from-indigo-300 to-sky-200 rounded p-4 sm:p-6 shadow-lg h-fit ">
+                  <div className="mb-10">
+                    <div className="mb-4 px-3">
+                      <h1 className="font-bold text-3xl text-slate-700">
+                        Venezuelan Banks
+                      </h1>
+                      <div className="font-light mt-3 text-sm">
+                        List of Venezuelan banks with their respective codes.
+                        You can select any of them to copy their codes
+                      </div>
+                      <div
+                        className={`text-slate-500 text-sm w-full text-right mt-2 font-medium ${
+                          banksDataQuery.isLoading ? "invisible" : ""
+                        }`}
+                      >
+                        Total banks:{" "}
+                        {banksDataQuery.isSuccess && banksDataQuery?.data
+                          ? banksDataQuery?.data?.length
+                          : "Unavailable"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="my-4 flex flex-row justify-center ">
+                        {showAll && (
+                          <div
+                            className="w-fit shadow bg-indigo-400/50 px-4 text-white p-1 rounded-full flex flex-row justify-center items-center content-center text-sm font-normal hover:shadow-sm transition duration-500 hover:bg-indigo-400 hover:text-white cursor-pointer active:shadow-none active:bg-indigo-500 active:border-indigo-500"
+                            onClick={toggleShowAll}
+                          >
+                            Show less
+                          </div>
+                        )}
+                      </div>
+
+                      {banksDataQuery.isLoading ? (
+                        <div className="text-xs text-center font-medium bg-slate-200/80 p-8 rounded-md">
+                          <Spinner />
+                        </div>
+                      ) : banksDataQuery.isSuccess && banksToDisplay?.length ? (
+                        <>
+                          <div className="grid grid-cols-2 gap-4 w-full text-slate-500">
+                            {banksToDisplay.map((bank, index) => (
+                              <div
+                                key={index}
+                                className="w-full bg-gray-200 px-3 py-1 rounded-md flex flex-col justify-between shadow hover:bg-gradient-to-tl hover:from-indigo-200 hover:to-amber-300/50 hover:via-indigo-100 group duration-500 cursor-pointer active:shadow-none active:bg-gradient-to-bl active:from-indigo-300 active:to-amber-300/70 active:via-indigo-200"
+                                onClick={() => {
+                                  onBankClick(bank.id);
+                                }}
+                              >
+                                <div className="text-sm font-light text-slate-500  group-hover:text-indigo-400/90 transition group-active:text-indigo-500">
+                                  {bank.name}
+                                </div>
+                                <div className=" text-md font-medium text-indigo-400 transition group-active:text-indigo-800/70">
+                                  {bank.id}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="w-full flex justify-center mt-4">
+                            <div
+                              className="w-fit shadow bg-indigo-400/70 px-4 text-white p-1 rounded-full flex flex-row justify-center items-center content-center text-sm font-normal hover:shadow-sm transition duration-500 hover:bg-indigo-400 hover:text-white cursor-pointer active:shadow-none active:bg-indigo-500 active:border-indigo-500"
+                              onClick={toggleShowAll}
+                            >
+                              Show {showAll ? "less" : "all"}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <EmptyMessage>Service unavailable😢</EmptyMessage>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-center text-xs text-gray-600 mt-5 scale-100 opacity-60">
+                    Source:{" "}
+                    <a
+                      className="font-bold text-indigo-600"
+                      href="https://www.farmatodo.com.ve/"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Farmatodo APIs data
+                    </a>
+                  </div>
+                </div>
               </div>
+              {/* End Column2 */}
             </div>
-            {/* End Container */}
+            {/* End Columns Containers */}
           </div>
+          {/* End Container */}
         </div>
       </MainLayout>
     </>

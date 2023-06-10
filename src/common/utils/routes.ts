@@ -23,7 +23,8 @@ type RoutesAlias =
   // Services
   | "service-cne-cid-search"
   | "service-bcv-get-rates"
-  | "service-monitor-dolar-get-rates";
+  | "service-monitor-dolar-get-rates"
+  | "service-farmatodo-get-banks-codes";
 
 /**
  * NextJS and other routes
@@ -47,6 +48,8 @@ export const routes: Record<RoutesAlias, string> = {
   "service-cne-cid-search": `${BACKEND_BASE_URL}/v1/cne/search/cid`,
   "service-bcv-get-rates": `${BACKEND_BASE_URL}/v1/bcv/rates`,
   "service-monitor-dolar-get-rates": `${BACKEND_BASE_URL}/v1/monitor-dolar/rates`,
+  "service-farmatodo-get-banks-codes":
+    "https://payments-dot-oracle-services-vzla.uc.r.appspot.com/backend/flexible/v1/payments/getBanks",
 };
 
 /**
