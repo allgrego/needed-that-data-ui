@@ -1,6 +1,14 @@
 import { getRoute } from "@/common/utils/routes";
 import { PersonDataCne } from "@/modules/nationalIdentity/types/cne.types";
 
+/**
+ * Get person data from CNE by its CID (V123456)
+ *
+ * @param {string} nationality 'V' or 'E'
+ * @param {string} number CID number
+ *
+ * @return {Promise<PersonDataCne | null>} Person data if found, otherwise null
+ */
 export const fetchPersonData = async (
   nationality: string,
   number: string
@@ -19,7 +27,8 @@ export const fetchPersonData = async (
     });
 
     if (response.status === 404) {
-      throw new Error(`No data has been found for ID ${nationality}-${number}`);
+      // throw new Error(`No data has been found for ID ${nationality}-${number}`);
+      return null;
     }
 
     if (response.status === 400) {
