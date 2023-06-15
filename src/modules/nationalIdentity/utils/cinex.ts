@@ -32,14 +32,14 @@ export function parseCinexUserData(
     }
 
     const user: CinexUserData = {
-      cinexId: cinexUser.usuarioid,
+      // cinexId: cinexUser.usuarioid,
       cid: cid,
       email: String(cinexUser.correoelectronico).toLowerCase(),
       dob: String(cinexUser.fechanacimiento).substring(0, 10),
       fname: cinexUser.nombre,
       lname: cinexUser.apellido,
       sex: String(cinexUser.sexo).toUpperCase(),
-      username: cinexUser.username,
+      // username: cinexUser.username,
     };
     return user;
   } catch (error) {
@@ -66,7 +66,6 @@ export async function getCinexUserDataByCID(
     const response = await fetch(url);
 
     if (response.status === 404) {
-      debugLog("No person data found");
       return undefined;
     }
     // If any other error

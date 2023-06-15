@@ -1,46 +1,70 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import {
   NationalityCodes,
   nationalityOptions,
 } from "@/modules/nationalIdentity/utils/cid";
 import { fetchPersonData } from "@/modules/nationalIdentity/utils/cne";
-
 import { PersonDataCne } from "@/modules/nationalIdentity/types/cne.types";
+import { debugErrorLog, debugLog } from "@/common/utils/debug";
+import { CinexUserData } from "@/modules/nationalIdentity/types/cinex.types";
+import { getCinexUserDataByCID } from "@/modules/nationalIdentity/utils/cinex";
 
 const useCidSearcher = () => {
   const defaultNationality =
     nationalityOptions[0]?.code || NationalityCodes.VENEZUELAN;
 
-  const [enableFetch, setEnableFetch] = useState<boolean>(false);
   const [nationality, setNationality] = useState<string>(defaultNationality);
   const [number, setNumber] = useState<string>("");
 
-  const query = useQuery(
-    ["cnePersonData", enableFetch],
-    async () => {
-      const personData = await fetchPersonData(nationality, number);
-      if (!personData) throw new Error("No person data...");
-      return personData;
+  const cnePersonDataMutation = useMutation<PersonDataCne>({
+    mutationKey: ["cnePersonData"],
+    mutationFn: async () => {
+      try {
+        const personData = await fetchPersonData(nationality, number);
+
+        if (!personData) {
+          return Promise.reject(
+            "No data found in CNE records for provided info"
+          );
+        }
+
+        return personData;
+      } catch (error) {
+        debugErrorLog("Error in CNE Person Data mutation", error);
+        return Promise.reject(
+          "Unable to retrieve person data. " + String(error)
+        );
+      }
     },
-    {
-      initialData: null,
-      retry: false,
-      cacheTime: 100000,
-      retryDelay: 500,
-      enabled: true,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
-  );
+    retry: 1,
+    retryDelay: 500,
+  });
 
-  const { data, isLoading: queryIsLoading, ...restQuery } = query;
+  const personCneData: PersonDataCne | undefined = cnePersonDataMutation.data;
 
-  const personData: PersonDataCne | null = query.isError ? null : data;
+  const cinexDataMutation = useMutation<CinexUserData | undefined>({
+    mutationKey: ["cinexPersonData"],
+    mutationFn: async () => {
+      try {
+        const cinexUserData = await getCinexUserDataByCID(
+          `${nationality}${number}`
+        );
 
-  const isLoading = query.isLoading || query.isFetching || query.isRefetching;
+        if (!cinexUserData) {
+          debugLog("No additional data found for this person");
+        }
+
+        return cinexUserData;
+      } catch (error) {
+        debugErrorLog("Error in CINEX User Data mutation", error);
+        return Promise.reject("Unable to retrieve person additional data");
+      }
+    },
+    retry: 1,
+    retryDelay: 500,
+  });
 
   const onChangeNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -48,8 +72,8 @@ const useCidSearcher = () => {
   };
 
   const onSubmit = () => {
-    setEnableFetch(true);
-    query.refetch();
+    cnePersonDataMutation.mutate();
+    cinexDataMutation.mutate();
   };
 
   return {
@@ -59,10 +83,9 @@ const useCidSearcher = () => {
     setNumber,
     onChangeNumber,
     onSubmit,
-    personData,
-    isLoading,
-
-    ...restQuery,
+    personCneData,
+    cnePersonDataMutation,
+    cinexDataMutation,
   };
 };
 

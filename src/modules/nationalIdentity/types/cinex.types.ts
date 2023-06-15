@@ -21,9 +21,9 @@ export type CinexPersonDataApiResponse = {
 
 // Internal usage
 export type CinexUserData = {
-  cinexId: number;
+  cinexId?: number;
   email: string;
-  username: string;
+  username?: string;
   fname: string;
   lname: string;
   cid: string;
