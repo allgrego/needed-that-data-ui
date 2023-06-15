@@ -49,3 +49,32 @@ export function getCurrentUTCTime(): string {
   const nowTimestamp = `${year}-${month}-${day} ${hour}:${minutes}:${seconds}.${milliseconds} UTC`;
   return nowTimestamp;
 }
+
+/**
+ * Calculate age from date string in format 'YYYY-MM-DD'
+ *
+ * @param dateString
+ * @returns
+ */
+export function getAge(dateString: string) {
+  const today = new Date();
+  const birthDate = new Date(dateString);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+/**
+ * Transform a date string from format 'YYYY-MM-DD' to 'DD-MM-YYYY'
+ *
+ * @param dateString
+ * @returns
+ */
+export function parseDateString(dateString: string) {
+  const dateParts = dateString.split("-").reverse();
+
+  return dateParts.join("-");
+}

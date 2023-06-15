@@ -19,12 +19,14 @@ type RoutesAlias =
   | "api-national-identity-cne-get-person-data"
   | "api-rates-bcv-get-rates"
   | "api-rates-monitor-dolar-get-rates"
+  | "api-national-identity-cinex-get-person-data-by-cid"
 
   // Services
   | "service-cne-cid-search"
   | "service-bcv-get-rates"
   | "service-monitor-dolar-get-rates"
-  | "service-farmatodo-get-banks-codes";
+  | "service-farmatodo-get-banks-codes"
+  | "service-cinex-get-person-info-by-cid";
 
 /**
  * NextJS and other routes
@@ -42,6 +44,9 @@ export const routes: Record<RoutesAlias, string> = {
   "api-national-identity-cne-get-person-data": "/api/cne/person",
   "api-rates-bcv-get-rates": "/api/bcv/rates",
   "api-rates-monitor-dolar-get-rates": "/api/monitor-dolar/rates",
+  "api-national-identity-cinex-get-person-data-by-cid":
+    "/api/cinex/person-data/:cid",
+
   /**
    * Services/Providers API
    */
@@ -50,6 +55,8 @@ export const routes: Record<RoutesAlias, string> = {
   "service-monitor-dolar-get-rates": `${BACKEND_BASE_URL}/v1/monitor-dolar/rates`,
   "service-farmatodo-get-banks-codes":
     "https://payments-dot-oracle-services-vzla.uc.r.appspot.com/backend/flexible/v1/payments/getBanks",
+  "service-cinex-get-person-info-by-cid":
+    "https://api2.cinex.com.ve/index.php/api/usuario/info/getusuarioinfobyci/:cid",
 };
 
 /**

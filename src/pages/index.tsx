@@ -19,6 +19,7 @@ import { BcvRatesInfo } from "@/modules/exchangeRates/types/bcv.types";
 import useBanksCodes from "@/modules/banks/hooks/useBanksCodes";
 import Spinner from "@/common/components/spinner/Spinner";
 import EmptyMessage from "@/common/components/emptyMessage/EmptyMessage";
+import PersonAdditionalDataResults from "@/modules/nationalIdentity/components/personAdditionalDataResults/PersonAdditionalDataResults";
 
 const Home: NextPage = () => {
   /**
@@ -31,13 +32,10 @@ const Home: NextPage = () => {
     setNumber,
     onChangeNumber,
     onSubmit,
-    isLoading,
-    isError,
-    error,
-    personData,
+    cnePersonDataMutation,
+    personCneData: personData,
+    cinexDataMutation,
   } = useCidSearcher();
-  const err = error as any;
-  const errorMessage = err?.message || undefined;
 
   /**
    * BCV Rates Related
@@ -196,25 +194,45 @@ const Home: NextPage = () => {
                       setNumber={setNumber}
                       onChangeNumber={onChangeNumber}
                       onSubmit={onSubmit}
-                      isLoading={isLoading}
+                      isLoading={cnePersonDataMutation.isLoading}
                     />
 
                     {/* Data */}
-                    {isLoading ? (
+                    {cnePersonDataMutation.isLoading ? (
                       <div className="mt-5 pl-4">
                         <Skeleton />
                       </div>
                     ) : (
                       <div className="mt-5 pl-4">
                         {/* Error Message */}
-                        {isError && (
-                          <CidPersonDataError errorMessage={errorMessage} />
+                        {cnePersonDataMutation.isError && (
+                          <CidPersonDataError
+                            errorMessage={String(cnePersonDataMutation.error)}
+                          />
                         )}
 
                         {/* Data displaying */}
+                        {/* CNE data */}
                         {personData && (
-                          <CidPersonDataResults personData={personData} />
+                          <>
+                            <CidPersonDataResults personData={personData} />
+                          </>
                         )}
+                      </div>
+                    )}
+                    {/* Additional Data (from cinex) */}
+                    {cinexDataMutation.isLoading ||
+                    cnePersonDataMutation.isLoading ? (
+                      <div className="mt-5 pl-4">
+                        <Skeleton />
+                      </div>
+                    ) : (
+                      <div className="mt-5 pl-4">
+                        {/* Error Message */}
+                        <PersonAdditionalDataResults
+                          cnePersonData={personData}
+                          userAdditionalData={cinexDataMutation.data}
+                        />
                       </div>
                     )}
                   </div>
@@ -228,7 +246,14 @@ const Home: NextPage = () => {
                     >
                       Venezuelan National Electoral Council (
                       <span className="italic">{'"CNE"'}</span>)
-                    </a>
+                    </a>{" "}
+                    and{" "}
+                    <span
+                      className="font-semibold cursor-help"
+                      title="Confidential information"
+                    >
+                      others
+                    </span>
                   </div>
                 </div>
 
