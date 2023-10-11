@@ -35,6 +35,10 @@ export const fetchPersonData = async (
       throw new Error("Invalid information has been provided");
     }
 
+    if (response.status === 503) {
+      throw new Error("Service is unavailable");
+    }
+
     if (!response.ok) {
       throw new Error("There was an error fetching data");
     }
@@ -47,7 +51,7 @@ export const fetchPersonData = async (
 
     return personData;
   } catch (error) {
-    console.error(error);
+    console.error("Failure fetching a person data", error);
     throw error;
   }
 };
