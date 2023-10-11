@@ -24,32 +24,32 @@ const CidPersonDataResults: FC<CidPersonDataResultsProps> = ({
           <div className="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Full name</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 capitalize">
-              {personData.name.toLowerCase()}
+              {personData?.name?.toLowerCase()}
             </dd>
           </div>
           <div className="bg-white px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">State</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 capitalize">
-              {personData.state?.toLowerCase()}
+              {personData?.state?.toLowerCase()}
             </dd>
           </div>
           <div className="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Municipality</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 capitalize">
-              {personData.municipality?.toLowerCase()}
+              {personData?.municipality?.toLowerCase()}
             </dd>
           </div>
           <div className="bg-white px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Parish</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 capitalize">
-              {personData.parish?.toLowerCase()}
+              {personData?.parish?.toLowerCase()}
             </dd>
           </div>
           {viewRif && (
             <div className="bg-gray-100 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">RIF</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 uppercase">
-                {personData.rif}
+                {personData?.rif}
               </dd>
             </div>
           )}

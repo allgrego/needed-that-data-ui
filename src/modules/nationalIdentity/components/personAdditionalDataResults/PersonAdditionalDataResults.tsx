@@ -29,7 +29,7 @@ const PersonAdditionalDataResults: FC<PersonAdditionalDataResultsProps> = ({
             <>
               More details about{" "}
               <span className="capitalize italic">
-                {cnePersonData.name.toLowerCase()}
+                {cnePersonData?.name?.toLowerCase()}
               </span>{" "}
               were found.
             </>
@@ -45,22 +45,22 @@ const PersonAdditionalDataResults: FC<PersonAdditionalDataResultsProps> = ({
             <div className="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Name</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 capitalize">
-                {String(userAdditionalData.fname).toLowerCase()}{" "}
-                {String(userAdditionalData.lname).toLowerCase()}
+                {String(userAdditionalData?.fname || "").toLowerCase()}{" "}
+                {String(userAdditionalData?.lname || "").toLowerCase()}
               </dd>
             </div>
           )}
           <div className="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Date of Birth</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 capitalize">
-              {parseDateString(userAdditionalData.dob)}
+              {parseDateString(userAdditionalData?.dob || "")}
             </dd>
           </div>
           <div className="bg-white px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Age</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
               <span className="capitalize">
-                {getAge(userAdditionalData.dob)}
+                {getAge(userAdditionalData?.dob)}
               </span>{" "}
               years
             </dd>

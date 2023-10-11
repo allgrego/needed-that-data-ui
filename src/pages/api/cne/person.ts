@@ -21,6 +21,8 @@ export default async function handler(
     },
   };
 
+  let status = 500;
+
   try {
     const url = `${getRoute(
       "service-cne-cid-search"
@@ -30,8 +32,10 @@ export default async function handler(
       method: "GET",
     });
 
+    status = response.status;
+    errorResponse.error.code = response.statusText;
+
     if (response.status === 400) {
-      errorResponse.error.code = response.statusText;
       errorResponse.error.message = `Bad arguments. From ${url}...`;
       try {
         const jsonResponse = await response.json();
@@ -39,12 +43,16 @@ export default async function handler(
       } catch (error) {
         console.log("Invalid JSON error response...");
       }
-      res.status(response.status).json(errorResponse);
-      return;
+
+      throw new Error("Bad argument service response");
+    }
+
+    if (response.status === 503) {
+      errorResponse.error.message = `Service unavailable`;
+      throw new Error("Service is not available");
     }
 
     if (!response.ok) {
-      errorResponse.error.code = response.statusText;
       errorResponse.error.message = `Error fetching data from ${url}...`;
       try {
         const jsonResponse = await response.json();
@@ -62,7 +70,7 @@ export default async function handler(
     res.status(response.status).json(personData);
     return;
   } catch (error) {
-    console.error(error);
-    res.status(500).json(errorResponse);
+    console.error("Failure fetching a person data", error);
+    res.status(status).json(errorResponse);
   }
 }
